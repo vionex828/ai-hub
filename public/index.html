@@ -1,1 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0B3A2C">
+<title>AI Hub</title>
+<meta name="description" content="ChatGPT, Claude, Gemini, Grok and DeepSeek in one account. Pay in Taka.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 28'%3E%3Crect width='28' height='28' rx='8' fill='%230C7A57'/%3E%3Ccircle cx='10.8' cy='14' r='5' fill='none' stroke='white' stroke-width='2.2'/%3E%3Ccircle cx='17.2' cy='14' r='5' fill='none' stroke='white' stroke-width='2.2'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300..700&family=Geist+Mono:wght@400;500&family=Hind+Siliguri:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/app.css">
+</head>
+<body>
+<div class="app">
+  <div class="boot" id="boot"><div class="spin" aria-label="Loading"></div></div>
 
+  <!-- ===== LOGIN ===== -->
+  <section class="login" id="v-login" hidden>
+    <div class="lg-art">
+      <div class="brand"><svg class="mark" width="28" height="28" viewBox="0 0 28 28" aria-hidden="true"><rect class="m-bg" width="28" height="28" rx="8"/><circle class="m-c" cx="10.8" cy="14" r="5"/><circle class="m-c" cx="17.2" cy="14" r="5"/></svg><span data-brand></span></div>
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <h1>Every top AI.<br><span>One account.</span></h1>
+        <p>ChatGPT, Claude, Gemini, Grok and DeepSeek in one place. Buy a token plan, use any model you like, and pay in Taka.</p>
+      </div>
+      <div class="lg-models" id="lgModels"></div>
+      <div class="lg-feats">
+        <div><i data-ic="columns-3"></i>Compare up to 3 models side by side</div>
+        <div><i data-ic="coins"></i>See the token cost before you send</div>
+        <div><i data-ic="lock"></i>Pay securely in Taka with EPS</div>
+      </div>
+    </div>
+    <div class="lg-side">
+      <div class="lg-card">
+        <form class="lg-form" id="fPhone" novalidate>
+          <div><h2>Log in or sign up</h2><p class="sub">We'll text a 6-digit code to your number.</p></div>
+          <label class="lbl" for="phone">Mobile number</label>
+          <div class="phone"><span class="cc"><i data-ic="smartphone"></i>+880</span><input id="phone" inputmode="numeric" autocomplete="tel-national" placeholder="1712 345678" maxlength="16"></div>
+          <p class="err" id="phoneErr" hidden></p>
+          <button class="btn btn-pri btn-lg btn-block" type="submit" id="phoneBtn">Continue</button>
+          <p class="terms">By continuing, you agree to the <a class="link" href="/terms">Terms of Service</a> and <a class="link" href="/privacy">Privacy Policy</a>.</p>
+        </form>
+        <form class="lg-form" id="fOtp" hidden novalidate>
+          <div><h2>Enter your code</h2><p class="sub">Sent to <b id="otpTo"></b> · <button type="button" class="link" id="chgNum">Change</button></p></div>
+          <div class="otp" id="otpBoxes">
+            <input id="otp0" inputmode="numeric" autocomplete="one-time-code" maxlength="1" aria-label="Digit 1">
+            <input id="otp1" inputmode="numeric" maxlength="1" aria-label="Digit 2">
+            <input id="otp2" inputmode="numeric" maxlength="1" aria-label="Digit 3">
+            <input id="otp3" inputmode="numeric" maxlength="1" aria-label="Digit 4">
+            <input id="otp4" inputmode="numeric" maxlength="1" aria-label="Digit 5">
+            <input id="otp5" inputmode="numeric" maxlength="1" aria-label="Digit 6">
+          </div>
+          <p class="err" id="otpErr" hidden></p>
+          <button class="btn btn-pri btn-lg btn-block" type="submit" id="otpBtn">Verify and continue</button>
+          <div class="otp-foot"><span id="debugCode"></span><button type="button" class="link" id="resend" disabled></button></div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== APP ===== -->
+  <div class="shell" id="shell" hidden>
+    <aside class="side" id="side" aria-label="Sidebar">
+      <div class="side-in">
+        <div class="side-head">
+          <div class="brand"><svg class="mark" width="26" height="26" viewBox="0 0 28 28" aria-hidden="true"><rect class="m-bg" width="28" height="28" rx="8"/><circle class="m-c" cx="10.8" cy="14" r="5"/><circle class="m-c" cx="17.2" cy="14" r="5"/></svg><span data-brand></span></div>
+          <button class="icon-btn" data-side-toggle aria-label="Close sidebar" title="Close sidebar"><i data-ic="panel-left"></i></button>
+        </div>
+        <button class="new-chat" data-new><i data-ic="square-pen"></i>New chat</button>
+        <nav class="nav" aria-label="Main">
+          <button data-go="chat"><i data-ic="message-square"></i>Chat</button>
+          <button data-go="plans"><i data-ic="credit-card"></i>Plans &amp; top-up</button>
+          <button data-go="usage"><i data-ic="receipt-text"></i>Usage</button>
+        </nav>
+        <div class="recent">
+          <div class="side-lbl">Recent</div>
+          <div class="recent-list" id="recent"></div>
+        </div>
+        <div class="meter">
+          <div class="meter-top">
+            <svg class="ring" viewBox="0 0 44 44" aria-hidden="true"><circle class="r-bg" cx="22" cy="22" r="18"/><circle class="r-fg" data-ring cx="22" cy="22" r="18"/></svg>
+            <div><div class="meter-n"><span data-bal-short></span> tokens left</div><div class="meter-s" data-bal-sub></div></div>
+          </div>
+          <button class="btn btn-out btn-sm btn-block" data-go="plans"><i data-ic="plus"></i>Top up</button>
+        </div>
+        <div class="me"><span class="avatar"><i data-ic="user"></i></span><span class="me-t"><span data-phone></span><span class="me-s" data-plan-line></span></span><button class="icon-btn" data-logout aria-label="Log out" title="Log out" style="margin-left:auto"><i data-ic="log-out"></i></button></div>
+      </div>
+    </aside>
+    <div class="scrim" id="scrim" hidden></div>
+
+    <main class="main">
+      <section class="view" id="v-chat">
+        <div class="topbar">
+          <button class="icon-btn open-side" data-side-toggle aria-label="Open sidebar" title="Open sidebar"><i data-ic="panel-left"></i></button>
+          <span class="tb-title" id="chatTitle"></span>
+          <div class="tb-right">
+            <button class="bal-pill" data-go="plans" data-bal-pill><i data-ic="coins"></i><span data-bal-short></span><span class="w">tokens</span></button>
+            <button class="icon-btn only-sm" data-new aria-label="New chat" title="New chat"><i data-ic="square-pen"></i></button>
+          </div>
+        </div>
+        <div class="msgs" id="msgs"></div>
+        <div class="composer">
+          <div class="cp-in">
+            <div class="warn" id="warn" hidden></div>
+            <form class="cp-card" id="fSend">
+              <label class="sr" for="prompt">Message</label>
+              <textarea id="prompt" rows="1" placeholder="Ask anything"></textarea>
+              <div class="cp-tools">
+                <button type="button" class="tb-btn model-btn" id="modelBtn" aria-haspopup="true" aria-expanded="false" aria-controls="picker"></button>
+                <button type="button" class="tb-btn" id="cmpBtn" aria-pressed="false" title="Compare answers from up to 3 models"><i data-ic="columns-3"></i><span class="compare-lbl">Compare</span></button>
+                <button class="send" id="sendBtn" type="submit" aria-label="Send"><i data-ic="arrow-up"></i></button>
+              </div>
+              <div class="picker" id="picker" hidden></div>
+            </form>
+            <div class="cp-foot"><span id="est"></span><span id="left"></span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="view" id="v-plans" hidden>
+        <div class="topbar"><button class="icon-btn open-side" data-side-toggle aria-label="Open sidebar"><i data-ic="panel-left"></i></button><div class="tb-right"><button class="bal-pill" data-go="usage" data-bal-pill><i data-ic="coins"></i><span data-bal-short></span><span class="w">tokens</span></button></div></div>
+        <div class="page-body"><div class="page" id="plansPage"></div></div>
+      </section>
+
+      <section class="view" id="v-usage" hidden>
+        <div class="topbar"><button class="icon-btn open-side" data-side-toggle aria-label="Open sidebar"><i data-ic="panel-left"></i></button><div class="tb-right"><button class="bal-pill" data-go="plans" data-bal-pill><i data-ic="coins"></i><span data-bal-short></span><span class="w">tokens</span></button></div></div>
+        <div class="page-body"><div class="page" id="usagePage"></div></div>
+      </section>
+    </main>
+  </div>
+</div>
+
+<div class="modal" id="pay" hidden role="dialog" aria-modal="true" aria-labelledby="payT">
+  <div class="modal-card" id="payCard"></div>
+</div>
+<div class="toast" id="toast" role="status" hidden></div>
+
+<script src="/vendor/marked.umd.js"></script>
+<script src="/vendor/purify.min.js"></script>
+<script src="/icons.js"></script>
+<script src="/app.js"></script>
+</body>
+</html>
